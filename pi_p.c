@@ -25,27 +25,25 @@
 #include <sys/time.h>
 
 
-//   Función para medir tiempo (segundos)
-
 double GetTime() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + tv.tv_usec * 1e-6;
 }
 
-//   Función f(x) usada para el cálculo de pi
+
 double f(double a) {
     return 4.0 / (1.0 + a * a);
 }
 
-//   Estructura para pasar datos a los hilos
+
 typedef struct {
     int start;
     int end;
     double h;
 } thread_args;
 
-//   Función ejecutada por cada hilo
+
 void *thread_function(void *arg) {
     thread_args *args = (thread_args *)arg;
 
@@ -57,13 +55,13 @@ void *thread_function(void *arg) {
         local_sum += f(x);
     }
 
-    // Retornar la suma parcial
+
     double *ret = malloc(sizeof(double));
     *ret = local_sum;
     pthread_exit(ret);
 }
 
-//   Calcular pi en paralelo con T hilos
+
 double CalcPi(int n, int T) {
     pthread_t threads[T];
     thread_args args[T];
@@ -77,7 +75,7 @@ double CalcPi(int n, int T) {
 
     for (int t = 0; t < T; t++) {
         int end = start + chunk;
-        if (t == T - 1) end += remainder; // Último hilo toma lo que sobra
+        if (t == T - 1) end += remainder;
 
         args[t].start = start;
         args[t].end = end;
@@ -88,7 +86,6 @@ double CalcPi(int n, int T) {
         start = end;
     }
 
-    // Recoger sumas parciales
     double global_sum = 0.0;
     for (int t = 0; t < T; t++) {
         double *partial_sum;
